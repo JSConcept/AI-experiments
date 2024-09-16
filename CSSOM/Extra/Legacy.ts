@@ -1,7 +1,6 @@
-// Определяем тип для точки, используя DOMPoint
-export type Point = DOMPoint;
+import { parseOrigin, Point } from "../Utils.ts";
 
-// Класс для работы с матрицами 3x3 (аффинные трансформации)
+//
 export class Matrix3x3 {
     m: number[];
 
@@ -10,7 +9,7 @@ export class Matrix3x3 {
         this.m = m || [1, 0, 0, 0, 1, 0, 0, 0, 1];
     }
 
-    // Умножение матрицы на другую матрицу
+    //
     multiply(other: Matrix3x3): Matrix3x3 {
         const a = this.m;
         const b = other.m;
@@ -30,7 +29,7 @@ export class Matrix3x3 {
         return new Matrix3x3(result);
     }
 
-    // Применение матрицы к точке
+    //
     applyToPoint(point: Point): Point {
         const x = point.x, y = point.y;
         const m = this.m;
@@ -45,7 +44,7 @@ export class Matrix3x3 {
         }
     }
 
-    // Инвертирование матрицы
+    //
     inverse(): Matrix3x3 {
         const m = this.m;
         const det =
@@ -74,7 +73,7 @@ export class Matrix3x3 {
         return new Matrix3x3(result);
     }
 
-    // Масштабирование матрицы
+    //
     scale(sx: number, sy: number): Matrix3x3 {
         const scaleMatrix = new Matrix3x3([
             sx, 0,  0,
@@ -84,7 +83,7 @@ export class Matrix3x3 {
         return this.multiply(scaleMatrix);
     }
 
-    // Перенос (трансляция) матрицы
+    //
     translate(tx: number, ty: number): Matrix3x3 {
         const translateMatrix = new Matrix3x3([
             1, 0, tx,
@@ -93,4 +92,52 @@ export class Matrix3x3 {
         ]);
         return this.multiply(translateMatrix);
     }
+}
+
+//
+export function parseTransformWithOrigin(transform: string, transformOrigin: string, element: Element): Matrix3x3 {
+    const transformMatrix     = parseTransform(transform);
+    const origin              = parseOrigin(transformOrigin, element);
+    const originMatrix        = new Matrix3x3([ 1, 0, -origin.x,  0, 1, -origin.y,  0, 0, 1 ]);
+    const inverseOriginMatrix = new Matrix3x3([ 1, 0,  origin.x,  0, 1,  origin.y,  0, 0, 1 ]);
+    return inverseOriginMatrix.multiply(transformMatrix).multiply(originMatrix);
+}
+
+//
+export function parseTransform(transform: string): Matrix3x3 {
+    const matrixRegex = /matrix\(([^)]+)\)/;
+    const matrix3dRegex = /matrix3d\(([^)]+)\)/;
+
+    //
+    let m: number[];
+    if (matrixRegex.test(transform)) {
+        const matches = transform.match(matrixRegex);
+        if (matches) {
+            const values = matches[1].split(',').map(parseFloat);
+            m = [
+                values[0], values[2], values[4],
+                values[1], values[3], values[5],
+                0, 0, 1
+            ];
+            return new Matrix3x3(m);
+        }
+    } else if (matrix3dRegex.test(transform)) {
+        const matches = transform.match(matrix3dRegex);
+        if (matches) {
+            const values = matches[1].split(',').map(parseFloat);
+            m = [
+                values[0], values[4], values[12],
+                values[1], values[5], values[13],
+                values[2], values[6], values[14]
+            ];
+            return new Matrix3x3(m);
+        }
+    }
+
+    //
+    return new Matrix3x3([
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+    ]);
 }
