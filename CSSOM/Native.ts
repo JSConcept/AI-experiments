@@ -9,10 +9,10 @@ export const transformationMatrixCache = new WeakMap<Element, DOMMatrix>();
  * @param element Элемент DOM.
  * @returns DOMMatrix представляющая трансформацию элемента.
  */
-export function getElementToPageMatrixAlt(element: Element): DOMMatrix {
+/*export function getNodeFullTransformAlt(element: Element): DOMMatrix {
     // Создаем начальную единичную матрицу
     let matrix = new DOMMatrix();
-    let chain = getParentChain(element);
+    let chain = [element, ...getParentChain(element)];
     for (const el of chain) {
         const computedStyle = getComputedStyle(el);
 
@@ -25,12 +25,12 @@ export function getElementToPageMatrixAlt(element: Element): DOMMatrix {
         const originPoint = parseOrigin(origin, el);
 
         // Учитываем scroll
-        const scrollMatrix = new DOMMatrix([
-            1, 0, -el.scrollLeft,
-            0, 1, -el.scrollTop,
-            //0, 0, 1
-        ]);
-        elementMatrix = scrollMatrix.multiply(elementMatrix);
+        //const scrollMatrix = new DOMMatrix([
+        //    1, 0, -el.scrollLeft,
+        //    0, 1, -el.scrollTop,
+        //    //0, 0, 1
+        //]);
+        //elementMatrix = scrollMatrix.multiply(elementMatrix);
 
         // Смещаем матрицу к origin
         const originMatrix = new DOMMatrix().translate(originPoint.x, originPoint.y);
@@ -55,19 +55,20 @@ export function getElementToPageMatrixAlt(element: Element): DOMMatrix {
     // Кешируем матрицу
     transformationMatrixCache.set(element, matrix);
     return matrix;
-}
+}*/
 
 /**
  * Получает общую матрицу трансформации элемента относительно страницы.
  * @param element Элемент DOM.
  * @returns DOMMatrix представляющая трансформацию элемента.
  */
-export function getElementToPageMatrix(element: Element): DOMMatrix {
+export function getNodeFullTransform(element: Element): DOMMatrix {
     // Создаем начальную единичную матрицу
     let matrix = new DOMMatrix();
 
     // Получаем цепочку родителей от текущего элемента до корневого элемента
-    let chain = getParentChain(element);
+    let chain = [element, ...getParentChain(element)];
+    //console.log(chain);
 
     // Проходим по цепочке родителей
     for (const el of chain) {
@@ -78,13 +79,14 @@ export function getElementToPageMatrix(element: Element): DOMMatrix {
         let elementMatrix = new DOMMatrix(transform);
 
         // Учитываем преобразования origin
-        const origin = computedStyle.transformOrigin || computedStyle.webkitTransformOrigin || '0 0';
+        const origin = computedStyle.transformOrigin || computedStyle.webkitTransformOrigin || `${((el as HTMLElement)?.offsetWidth||0)*0.5}px ${((el as HTMLElement)?.offsetHeight || 0)*0.5}px`;
         const originPoint = parseOrigin(origin, el);
+        //console.log(origin);
 
         // Смещаем матрицу к origin
         const originMatrix = new DOMMatrix().translate(originPoint.x, originPoint.y);
         const inverseOriginMatrix = new DOMMatrix().translate(-originPoint.x, -originPoint.y);
-        elementMatrix = inverseOriginMatrix.multiply(elementMatrix).multiply(originMatrix);
+        elementMatrix = originMatrix.multiply(elementMatrix).multiply(inverseOriginMatrix);
 
         // Учитываем позицию элемента относительно родителя
         let positionMatrix = new DOMMatrix();
@@ -92,6 +94,7 @@ export function getElementToPageMatrix(element: Element): DOMMatrix {
             // Получаем смещение элемента относительно offsetParent
             const offsetLeft = el.offsetLeft;
             const offsetTop = el.offsetTop;
+            //console.log(offsetLeft);
 
             // Учитываем скролл offsetParent
             let parentScrollLeft = 0;

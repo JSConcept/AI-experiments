@@ -5,7 +5,7 @@ import { parseLength, parseTransform, parseOrigin, getElementZoom, getParentChai
 const transformationMatrixSymbol = Symbol('transformationMatrix');
 
 // Функция для получения матрицы трансформации элемента относительно страницы
-export function getElementToPageMatrix(element: Element): Matrix3x3 {
+export function getNodeFullTransform(element: Element): Matrix3x3 {
     // Проверяем, есть ли кешированная матрица
     //let matrix = (element as any)[transformationMatrixSymbol] as Matrix3x3;
     //if (matrix) { return matrix; }
@@ -18,7 +18,7 @@ export function getElementToPageMatrix(element: Element): Matrix3x3 {
     ]);
 
     //
-    let chain = getParentChain(element);
+    let chain = [element, ...getParentChain(element)];
     for (const el of chain) {
         // Учитываем scroll
         if (el instanceof HTMLElement) {

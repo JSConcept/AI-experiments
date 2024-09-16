@@ -5,14 +5,14 @@ import { parseLength, parseTransform, parseOrigin, getElementZoom, getParentChai
 // Символ для хранения кешированных матриц у элементов
 const transformationMatrixCache  = new WeakMap<Element, Matrix3x3>();
 
-// Изменение функции getElementToPageMatrix для использования WeakMap
-export function getElementToPageMatrixFromCache(element: Element): Matrix3x3 {
+// Изменение функции getNodeFullTransform для использования WeakMap
+export function getNodeFullTransformFromCache(element: Element): Matrix3x3 {
     // Проверяем, есть ли кешированная матрица
     let matrix = transformationMatrixCache.get(element);
     if (matrix) { return matrix; }
 
     // Остальной код функции остаётся без изменений...
-    matrix = getElementToPageMatrix(element);
+    matrix = getNodeFullTransform(element);
 
     // Кешируем матрицу
     transformationMatrixCache.set(element, matrix);
@@ -20,10 +20,10 @@ export function getElementToPageMatrixFromCache(element: Element): Matrix3x3 {
 }
 
 // Функция для получения матрицы трансформации элемента относительно страницы
-export function getElementToPageMatrixAlt(element: Element): Matrix3x3 {
+export function getNodeFullTransformAlt(element: Element): Matrix3x3 {
     //
     let matrix = new Matrix3x3();
-    let chain = getParentChain(element);
+    let chain = [element, ...getParentChain(element)];
     for (const el of chain) {
         const computedStyle = getComputedStyle(el);
 
@@ -72,12 +72,12 @@ export function getElementToPageMatrixAlt(element: Element): Matrix3x3 {
 }
 
 //
-export function getElementToPageMatrix(element: Element): Matrix3x3 {
+export function getNodeFullTransform(element: Element): Matrix3x3 {
     // Создаем начальную единичную матрицу
     let matrix = new Matrix3x3();
 
     // Получаем цепочку родителей от текущего элемента до корневого элемента
-    let chain = getParentChain(element);
+    let chain = [element, ...getParentChain(element)];
 
     // Проходим по цепочке родителей
     for (const el of chain) {
@@ -88,7 +88,7 @@ export function getElementToPageMatrix(element: Element): Matrix3x3 {
         let elementMatrix = parseTransform(transform);
 
         // Учитываем преобразования origin
-        const origin = computedStyle.transformOrigin || computedStyle.webkitTransformOrigin || '0 0';
+        const origin = computedStyle.transformOrigin || computedStyle.webkitTransformOrigin || `${((el as HTMLElement)?.offsetWidth || 0)*0.5}px ${((el as HTMLElement)?.offsetHeight || 0)*0.5}px`;
         const originPoint = parseOrigin(origin, el);
 
         // correct only after...
@@ -97,7 +97,7 @@ export function getElementToPageMatrix(element: Element): Matrix3x3 {
         // Смещаем матрицу к origin
         const originMatrix = new Matrix3x3().translate(originPoint.x, originPoint.y);
         const inverseOriginMatrix = new Matrix3x3().translate(-originPoint.x, -originPoint.y);
-        elementMatrix = inverseOriginMatrix.multiply(elementMatrix).multiply(originMatrix);
+        elementMatrix = originMatrix.multiply(elementMatrix).multiply(inverseOriginMatrix);
 
         // Учитываем позицию элемента относительно родителя
         let positionMatrix = new Matrix3x3();
