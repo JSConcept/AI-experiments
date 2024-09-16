@@ -1,6 +1,6 @@
-import { Matrix3x3, Point } from "./Matrix.ts";
+import { Matrix3x3, Point } from "../Matrix.ts";
 //import { transformationMatrixCache } from "./Native.ts";
-import { parseLength, parseTransform, parseOrigin, getElementZoom, getParentChain } from "./Utils.ts";
+import { parseLength, parseTransform, parseOrigin, getElementZoom, getParentChain } from "../Utils.ts";
 
 // Символ для хранения кешированных матриц у элементов
 const transformationMatrixCache  = new WeakMap<Element, Matrix3x3>();

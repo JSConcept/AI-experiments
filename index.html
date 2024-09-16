@@ -15,10 +15,14 @@
 
     <!-- -->
     <style>
-        body, html {
-            /*padding: 0px;
-            margin: 0px;*/
-            /*transform-origin: 0px 0px;*/
+        :where(*) {
+            transform: matrix(1, 0, 0, 1, 0, 0);
+        }
+
+        /* */
+        :where(body, html) {
+            padding: 0px;
+            margin: 0px;
         }
 
         /* */
@@ -30,7 +34,6 @@
             display: flex;
             place-content: center;
             place-items: center;
-            /*rotate: 60deg;*/
             transform: rotate(60deg);
         }
 
@@ -44,7 +47,6 @@
             place-content: center;
             place-items: center;
             /*place-self: start;*/
-            /*rotate: -40deg;*/
             transform: rotate(-40deg);
         }
     </style>

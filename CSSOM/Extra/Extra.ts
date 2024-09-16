@@ -1,5 +1,5 @@
-import { Matrix3x3, Point } from "./Matrix.ts";
-import { parseLength, parseTransform, parseOrigin, getElementZoom, getParentChain } from "./Utils.ts";
+import { Matrix3x3, Point } from "../Matrix.ts";
+import { parseLength, parseTransform, parseOrigin, getElementZoom, getParentChain } from "../Utils.ts";
 
 //
 const transformationMatrixSymbol = Symbol('transformationMatrix');

@@ -103,37 +103,40 @@ export function parseLength(value: string, size: number): number {
  * @param element Начальный элемент DOM.
  * @returns Массив элементов, представляющих цепочку предков.
  */
+
+//
+export function getParent(element: Element): Element | null {
+    //
+    if (element.parentElement) {
+        // Если текущий элемент имеет родителя в обычном DOM
+        return element.parentElement;
+    } else if (element instanceof ShadowRoot) {
+        // Если текущий узел является ShadowRoot, переход к его хосту
+        const host = element.host;
+        if (host) { return host }
+    } else if (element.parentNode) {
+        // Обработка других типов родительских узлов, если необходимо
+        return element.parentNode as Element;
+    }
+    return null;
+}
+
+//
 export function getParentChain(element: Element): Element[] {
     const parents: Element[] = [];
-    let current: Node | null = element;
+    let current: Element | null = element;
     while (current) {
-        if (current.parentElement) {
-            // Если текущий элемент имеет родителя в обычном DOM
-            parents.push(current.parentElement);
-            current = current.parentElement;
-        } else if (current instanceof ShadowRoot) {
-            // Если текущий узел является ShadowRoot, переход к его хосту
-            const host = current.host;
-            if (host) {
-                parents.push(host);
-                current = host;
-            } else {
-                // Если ShadowRoot не имеет хоста, заканчиваем цикл
-                current = null;
-            }
-        } else if (current.parentNode) {
-            // Обработка других типов родительских узлов, если необходимо
-            parents.push(current.parentNode as Element);
-            current = current.parentNode;
-        } else {
-            // Если нет родительских узлов, заканчиваем цикл
-            current = null;
-        }
+        const parent = getParent(current);
 
         // Опционально: остановка при достижении <body> или <html>
-        if (current && (current instanceof HTMLBodyElement || current instanceof HTMLHtmlElement)) {
-            parents.push(current as Element);
+        if (parent && (/*parent instanceof HTMLBodyElement ||*/ parent instanceof HTMLHtmlElement)) {
+            //parents.push(current as Element);
             break;
+        }
+
+        //
+        if (current = parent) {
+            parents.push(current);
         }
     }
     return parents;
@@ -180,3 +183,14 @@ export function getElementZoom(element: Element): number {
     return zoom;
 }
 
+//
+export function isNearlyIdentity(matrix: DOMMatrix, epsilon: number = 1e-6): boolean {
+    return (
+        Math.abs(matrix.a - 1) < epsilon &&
+        Math.abs(matrix.b) < epsilon &&
+        Math.abs(matrix.c) < epsilon &&
+        Math.abs(matrix.d - 1) < epsilon &&
+        Math.abs(matrix.e) < epsilon &&
+        Math.abs(matrix.f) < epsilon
+    );
+}

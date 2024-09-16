@@ -1,5 +1,5 @@
-import { Matrix3x3, Point } from "./Matrix.ts";
-import { parseLength, parseTransform, parseOrigin, getElementZoom } from "./Utils.ts";
+import { Matrix3x3, Point } from "../Matrix.ts";
+import { parseLength, parseTransform, parseOrigin, getElementZoom } from "../Utils.ts";
 
 //
 export function convertPointFromPageToNode(element: Element, pageX: number, pageY: number): { x: number; y: number } {
