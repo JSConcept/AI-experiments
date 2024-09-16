@@ -107,7 +107,6 @@ function getElementToPageMatrix(element: Element): Matrix3x3 {
         // Смещаем к origin
         const originMatrix = new Matrix3x3([1, 0, originX, 0, 1, originY, 0, 0, 1]);
         const inverseOriginMatrix = new Matrix3x3([1, 0, -originX, 0, 1, -originY, 0, 0, 1]);
-
         elementMatrix = inverseOriginMatrix.multiply(elementMatrix).multiply(originMatrix);
 
         // Учитываем позицию элемента
@@ -116,7 +115,6 @@ function getElementToPageMatrix(element: Element): Matrix3x3 {
 
         // Учитываем zoom
         const zoom = getElementZoom(el);
-
         const zoomMatrix = new Matrix3x3([zoom, 0, 0, 0, zoom, 0, 0, 0, 1]);
 
         // Общая матрица для текущего элемента
