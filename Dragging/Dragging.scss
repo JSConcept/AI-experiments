@@ -1,0 +1,46 @@
+/* Определяем кастомные свойства с использованием @property */
+@property --drag-x {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --drag-y {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+/* Контейнер */
+.container {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  /* Учитываем возможный zoom */
+  --zoom: 1;
+  zoom: var(--zoom);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Перетаскиваемый элемент */
+.draggable {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: #007bff;
+  cursor: grab;
+  box-sizing: border-box;
+  /* Начальные координаты в центре родителя */
+  left: calc(50% - (100px / 2));
+  top: calc(50% - (100px / 2));
+  /* Применяем трансформацию на основе --drag-x и --drag-y */
+  transform: translate(calc(var(--drag-x) * 1px), calc(var(--drag-y) * 1px));
+  transition: transform 0.2s ease; /* Для анимации при округлении */
+}
+
+.draggable:active {
+  cursor: grabbing;
+}
