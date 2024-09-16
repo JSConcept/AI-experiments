@@ -20,7 +20,7 @@ export function getElementToPageMatrixFromCache(element: Element): Matrix3x3 {
 }
 
 // Функция для получения матрицы трансформации элемента относительно страницы
-export function getElementToPageMatrix(element: Element): Matrix3x3 {
+export function getElementToPageMatrixAlt(element: Element): Matrix3x3 {
     //
     let matrix = new Matrix3x3();
     let chain = getParentChain(element);
@@ -34,6 +34,9 @@ export function getElementToPageMatrix(element: Element): Matrix3x3 {
         // Учитываем transform-origin
         const origin = computedStyle.transformOrigin || computedStyle.webkitTransformOrigin || '0 0';
         const originPoint = parseOrigin(origin, el);
+
+        // correct only after...
+        originPoint.x /= originPoint.w, originPoint.y /= originPoint.w;
 
         // Учитываем scroll
         const scrollMatrix = new Matrix3x3([
@@ -68,10 +71,8 @@ export function getElementToPageMatrix(element: Element): Matrix3x3 {
     return matrix;
 }
 
-
-
-
-/*export function getElementToPageMatrix(element: Element): DOMMatrix {
+//
+export function getElementToPageMatrix(element: Element): Matrix3x3 {
     // Создаем начальную единичную матрицу
     let matrix = new Matrix3x3();
 
@@ -84,15 +85,18 @@ export function getElementToPageMatrix(element: Element): Matrix3x3 {
 
         // Получаем текущие трансформации
         const transform = computedStyle.transform || computedStyle.webkitTransform || 'none';
-        let elementMatrix = new DOMMatrix(transform);
+        let elementMatrix = parseTransform(transform);
 
         // Учитываем преобразования origin
         const origin = computedStyle.transformOrigin || computedStyle.webkitTransformOrigin || '0 0';
         const originPoint = parseOrigin(origin, el);
 
+        // correct only after...
+        originPoint.x /= originPoint.w, originPoint.y /= originPoint.w;
+
         // Смещаем матрицу к origin
-        const originMatrix = new DOMMatrix().translate(originPoint.x, originPoint.y);
-        const inverseOriginMatrix = new DOMMatrix().translate(-originPoint.x, -originPoint.y);
+        const originMatrix = new Matrix3x3().translate(originPoint.x, originPoint.y);
+        const inverseOriginMatrix = new Matrix3x3().translate(-originPoint.x, -originPoint.y);
         elementMatrix = inverseOriginMatrix.multiply(elementMatrix).multiply(originMatrix);
 
         // Учитываем позицию элемента относительно родителя
@@ -100,13 +104,12 @@ export function getElementToPageMatrix(element: Element): Matrix3x3 {
         if (el instanceof HTMLElement) {
             // Получаем смещение элемента относительно offsetParent
             const offsetLeft = el.offsetLeft;
-            const offsetTop = el.offsetTop;
+            const offsetTop  = el.offsetTop;
 
             // Учитываем скролл offsetParent
-            let parentScrollLeft = 0;
-            let parentScrollTop = 0;
+            let parentScrollLeft = 0, parentScrollTop = 0;
             if (el.offsetParent instanceof HTMLElement) {
-                parentScrollLeft = el.offsetParent.scrollLeft;
+                parentScrollLeft = el.offsetParent.scrollLeft,
                 parentScrollTop = el.offsetParent.scrollTop;
             }
 
@@ -116,7 +119,7 @@ export function getElementToPageMatrix(element: Element): Matrix3x3 {
 
         // Учитываем zoom
         const zoom = getElementZoom(el);
-        const zoomMatrix = new DOMMatrix().scale(zoom);
+        const zoomMatrix = new Matrix3x3().scale(zoom, zoom);
 
         // Общая матрица для текущего элемента
         const totalMatrix = positionMatrix.multiply(zoomMatrix).multiply(elementMatrix);
@@ -129,5 +132,3 @@ export function getElementToPageMatrix(element: Element): Matrix3x3 {
     transformationMatrixCache.set(element, matrix);
     return matrix;
 }
-
-*/

@@ -38,7 +38,6 @@ export class Matrix3x3 {
         const newY = m[3] * x + m[4] * y + m[5];
         const w = m[6] * x + m[7] * y + m[8];
 
-        //
         if (w !== 1 && w !== 0) {
             return new DOMPoint(newX, newY, 0, w);
         } else {
@@ -73,5 +72,25 @@ export class Matrix3x3 {
             (m[0] * m[4] - m[1] * m[3]) * invDet,
         ];
         return new Matrix3x3(result);
+    }
+
+    // Масштабирование матрицы
+    scale(sx: number, sy: number): Matrix3x3 {
+        const scaleMatrix = new Matrix3x3([
+            sx, 0,  0,
+            0,  sy, 0,
+            0,  0,  1
+        ]);
+        return this.multiply(scaleMatrix);
+    }
+
+    // Перенос (трансляция) матрицы
+    translate(tx: number, ty: number): Matrix3x3 {
+        const translateMatrix = new Matrix3x3([
+            1, 0, tx,
+            0, 1, ty,
+            0, 0, 1
+        ]);
+        return this.multiply(translateMatrix);
     }
 }

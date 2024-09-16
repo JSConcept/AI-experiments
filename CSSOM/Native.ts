@@ -9,12 +9,7 @@ export const transformationMatrixCache = new WeakMap<Element, DOMMatrix>();
  * @param element Элемент DOM.
  * @returns DOMMatrix представляющая трансформацию элемента.
  */
-
-//export function getElementToPageMatrix(element: Element): DOMMatrix {
-    /*if (transformationMatrixCache.has(element)) {
-        return transformationMatrixCache.get(element)!;
-    }*/
-/*
+export function getElementToPageMatrixAlt(element: Element): DOMMatrix {
     // Создаем начальную единичную матрицу
     let matrix = new DOMMatrix();
     let chain = getParentChain(element);
@@ -61,15 +56,6 @@ export const transformationMatrixCache = new WeakMap<Element, DOMMatrix>();
     transformationMatrixCache.set(element, matrix);
     return matrix;
 }
-
-*/
-
-
-//import { Matrix3x3, Point } from "./Matrix.ts";
-//import { parseLength, parseTransform, parseOrigin, getElementZoom, getParentChain } from "./Utils.ts";
-
-// Кеширование матриц трансформации элементов с помощью WeakMap
-//const transformationMatrixCache = new WeakMap<Element, DOMMatrix>();
 
 /**
  * Получает общую матрицу трансформации элемента относительно страницы.
