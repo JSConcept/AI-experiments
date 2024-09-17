@@ -25,7 +25,7 @@ export function parseLength(value: string, size: number): number {
 export function getOffsetParent(element: Element): Element | null {
     const position = getComputedStyle(element, "")?.position || "static";
     //if (position == "absolute" || position == "fixed") {
-        return (element as HTMLElement)?.offsetParent;
+        return (element as HTMLElement)?.offsetParent ?? (element as any)?.host;
     //}
     //return (element?.parentElement ?? (element as any)?.host ?? element?.parentNode) as (Element | null);
 }
