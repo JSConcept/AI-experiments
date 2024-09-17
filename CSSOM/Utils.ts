@@ -22,20 +22,20 @@ export function parseLength(value: string, size: number): number {
 }
 
 //
-export function getParent(element: Element): Element | null {
+export function getOffsetParent(element: Element): Element | null {
     const position = getComputedStyle(element, "")?.position || "static";
-    if (position == "absolute" || position == "fixed") {
+    //if (position == "absolute" || position == "fixed") {
         return (element as HTMLElement)?.offsetParent;
-    }
-    return (element?.parentElement ?? (element as any)?.host ?? element?.parentNode) as (Element | null);
+    //}
+    //return (element?.parentElement ?? (element as any)?.host ?? element?.parentNode) as (Element | null);
 }
 
 //
-export function getParentChain(element: Element): Element[] {
+export function getOffsetParentChain(element: Element): Element[] {
     const parents: Element[] = [];
     let current: Element | null = element;
     while (current) {
-        const parent = getParent(current);
+        const parent = getOffsetParent(current);
 
         //
         if (parent && (/*parent instanceof HTMLBodyElement ||*/ parent instanceof HTMLHtmlElement)) {

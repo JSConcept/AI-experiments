@@ -3,13 +3,13 @@
  */
 
 //
-import { isNearlyIdentity, parseOrigin, getElementZoom, getParentChain, type Point } from "./Utils.ts";
+import { isNearlyIdentity, parseOrigin, getElementZoom, getOffsetParentChain, type Point } from "./Utils.ts";
 
 //
 export const transformationMatrixCache = new WeakMap<Element, DOMMatrix>();
 export function getNodeFullTransform(element: Element): DOMMatrix {
     let matrix = new DOMMatrix();
-    let chain = [element, ...getParentChain(element)];
+    let chain = [element, ...getOffsetParentChain(element)];
     for (const el of chain) {
         const computedStyle = getComputedStyle(el);
         const transform = computedStyle.transform || computedStyle.webkitTransform || 'none';

@@ -4,7 +4,7 @@
 
 //
 import { Matrix3x3, parseTransform } from "./Legacy.ts";
-import { parseOrigin, getElementZoom, getParentChain } from "../Utils.ts";
+import { parseOrigin, getElementZoom, getOffsetParentChain } from "../Utils.ts";
 
 //
 export const transformationMatrixCache  = new WeakMap<Element, Matrix3x3>();
@@ -19,7 +19,7 @@ export function getNodeFullTransformFromCache(element: Element): Matrix3x3 {
 //
 export function getNodeFullTransformAlt(element: Element): Matrix3x3 {
     let matrix = new Matrix3x3();
-    let chain = [element, ...getParentChain(element)];
+    let chain = [element, ...getOffsetParentChain(element)];
     for (const el of chain) {
         const computedStyle = getComputedStyle(el);
         const transform = computedStyle.transform || computedStyle.webkitTransform || 'none';
@@ -62,7 +62,7 @@ export function getNodeFullTransformAlt(element: Element): Matrix3x3 {
 //
 export function getNodeFullTransform(element: Element): Matrix3x3 {
     let matrix = new Matrix3x3();
-    let chain = [element, ...getParentChain(element)];
+    let chain = [element, ...getOffsetParentChain(element)];
     for (const el of chain) {
         const computedStyle = getComputedStyle(el);
         const transform = computedStyle.transform || computedStyle.webkitTransform || 'none';

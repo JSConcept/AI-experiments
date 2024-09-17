@@ -4,7 +4,7 @@
 
 //
 import { Matrix3x3, parseTransform } from "./Legacy.ts";
-import { getParentChain } from "../Utils.ts";
+import { getOffsetParentChain } from "../Utils.ts";
 
 //
 export const transformationMatrixSymbol = Symbol('transformationMatrix');
@@ -16,7 +16,7 @@ export function getNodeFullTransform(element: Element): Matrix3x3 {
     ]);
 
     //
-    let chain = [element, ...getParentChain(element)];
+    let chain = [element, ...getOffsetParentChain(element)];
     for (const el of chain) {
         if (el instanceof HTMLElement) {
             const scrollMatrix = new Matrix3x3([
