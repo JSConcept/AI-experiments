@@ -2,10 +2,14 @@ import { convertPointFromNodeToPage, convertPointFromPageToNode } from "./CSSOM/
 
 //
 const element = document.querySelector(".r1");
+const cx = document.querySelector(".coordinate .x");
+const cy = document.querySelector(".coordinate .y");
 
 // @ts-ignore
-element?.addEventListener("pointermove", (ev: PointerEvent)=>{
-    //console.log(ev.pageX, ev.pageY);
-    const coord = convertPointFromPageToNode(element, ev.pageX, ev.pageY);
-    console.log(coord.x, coord.y);
+document.documentElement?.addEventListener("pointermove", (ev: PointerEvent)=>{
+    if (element) {
+        const coord = convertPointFromPageToNode(element, ev.pageX, ev.pageY);
+        if (cx) { cx.innerHTML = `X: ${coord.x.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}`; }
+        if (cy) { cy.innerHTML = `Y: ${coord.y.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}`; }
+    }
 });

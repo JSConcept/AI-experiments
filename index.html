@@ -12,17 +12,40 @@
             <span>Titles</span>
         </div>
     </div>
+    <div class="coordinate">
+        <span class="x"></span>
+        <span class="y"></span>
+    </div>
 
     <!-- -->
     <style>
-        :where(*) {
-            /*transform: matrix(1, 0, 0, 1, 0, 0);*/
+        body, html {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         }
 
         /* */
-        :where(body, html) {
-            /*padding: 0px;
-            margin: 0px;*/
+        .coordinate {
+            display: grid;
+            grid-template-columns: minmax(0px, 1fr) minmax(0px, 1fr);
+            grid-template-rows: minmax(max-content, 1fr);
+            block-size: max-height;
+            inline-size: 12rem;
+            gap: 1rem;
+        }
+
+        /* */
+        .coordinate > * {
+            margin-block-start: 2rem;
+            position: relative;
+
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            align-content: center;
+            align-items: center;
+
+            padding: 0.5rem;
         }
 
         /* */
