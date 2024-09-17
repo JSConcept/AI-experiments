@@ -23,6 +23,10 @@ export function parseLength(value: string, size: number): number {
 
 //
 export function getParent(element: Element): Element | null {
+    const position = getComputedStyle(element, "")?.position || "static";
+    if (position == "absolute" || position == "fixed") {
+        return (element as HTMLElement)?.offsetParent;
+    }
     return (element?.parentElement ?? (element as any)?.host ?? element?.parentNode) as (Element | null);
 }
 
